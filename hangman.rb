@@ -1,3 +1,11 @@
+$words = []
+File.open("words.txt").readlines.each do |line|
+    if line.length >= 5 && line.length <= 12
+        $words << line.downcase
+    end
+end
+# puts words
+
 # set up game
     # generate game
         # dictionary of hangman words
@@ -19,6 +27,7 @@
                 # player wins
 
 class Hangman
+    attr_accessor :word
 
     @@rules = %q{
         RULES OF HANGMAN
@@ -28,7 +37,8 @@ six strikes and you are out
     }
 
     def initialize
-        puts @@rules.center
+        puts @@rules
+        @word = $words.sample
     end
 end
 
@@ -40,3 +50,4 @@ end
         # csv format?
 
 game = Hangman.new
+puts game.word
