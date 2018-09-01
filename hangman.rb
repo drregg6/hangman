@@ -18,9 +18,25 @@
             # if player guesses the word
                 # player wins
 
+class Hangman
+
+    @@rules = %q{
+        RULES OF HANGMAN
+    -------------------------
+guess the hidden word letter by letter
+six strikes and you are out
+    }
+
+    def initialize
+        puts @@rules.center
+    end
+end
+
 
 # set up save option
     # when player enters "SAVE"
         # File.open("saved_game.txt", "w")
         # write over file
         # csv format?
+
+game = Hangman.new
