@@ -1,6 +1,7 @@
 require './gameboard'
 
 # global for now
+# i feel as though these could be used in a module
 $words = []
 File.open("words.txt").readlines.each do |line|
     if line.length >= 5 && line.length <= 12
@@ -63,32 +64,39 @@ six strikes and you are out
             # if @letter has already been guessed
             if @guessed_letters.include?(@letter)
                 # guess again dumb dumb
-                puts "Guess again dumb dumb\n"
-            end
+                puts "You have already guessed that!"
+
 
             # if @letter is more than one letter
-            if @letter.length != 1
+            elsif @letter.length != 1
                 # shame shame shame! no cheating!
-                puts "Shame! No cheating, guess one at a time!\n"
-            end
+                puts "Shame! No cheating, guess one at a time!"
+
 
             # if @letter is anything but a letter
-            if !all_letters(@letter)
+            elsif !all_letters(@letter)
                 # guess a letter dumb dumb
-                puts "You did it wrong... guess a LETTER!\n"
-            end
+                puts "You did it wrong... guess a LETTER!"
+
             # if @letter exists in @word
+            elsif @word.include?(@letter)
                 # place @letter in the correct place on @gameboard
+                puts "You guessed one correctly!"
                 # place in @guessed_letters arr
+                @guessed_letters << @letter
+
             # if not
+            elsif !@word.include?(@letter)
                 # add a strike
+                puts "You guessed one incorrectly!"
                 # place in @guessed_letters arr
+                @guessed_letters << @letter
+            end
             if @letter == "f"
                 break
             end
-            @guessed_letters << @letter
+            @letter
         end
-        @letter
     end
 end
 
