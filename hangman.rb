@@ -7,7 +7,10 @@ File.open("words.txt").readlines.each do |line|
         $words << line.downcase
     end
 end
-# puts words
+
+def all_letters(str)
+    str[/[a-zA-Z]+/] == str
+end
 
 # set up game
     # generate game
@@ -49,20 +52,31 @@ six strikes and you are out
 
     def play_game
         loop do
+            puts "\n\n"
+            if @guessed_letters.length != 0
+                puts "Guessed letters: " + @guessed_letters.join(" - ")
+            end
             puts "Guess a letter!"
             $stdout.flush
             @letter = gets.chomp
 
             # if @letter has already been guessed
             if @guessed_letters.include?(@letter)
-                puts "Guess again dumb dumb"
-                p @guessed_letters
-            end
                 # guess again dumb dumb
+                puts "Guess again dumb dumb\n"
+            end
+
             # if @letter is more than one letter
+            if @letter.length != 1
                 # shame shame shame! no cheating!
+                puts "Shame! No cheating, guess one at a time!\n"
+            end
+
             # if @letter is anything but a letter
+            if !all_letters(@letter)
                 # guess a letter dumb dumb
+                puts "You did it wrong... guess a LETTER!\n"
+            end
             # if @letter exists in @word
                 # place @letter in the correct place on @gameboard
                 # place in @guessed_letters arr
