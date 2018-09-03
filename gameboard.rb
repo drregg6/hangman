@@ -23,9 +23,18 @@ class Gameboard
         @gameboard_arr = gameboard.split(' ')
         @found_indices = []
         # get placement of the letter in the string
-        puts @str_arr.length
+        @str_arr.each_index.select do |i|
+            if @str_arr[i] == letter
+                @found_indices << i
+            end
+        end
+        # p @found_indices
         # get placement in the gameboard
-        puts @gameboard_arr.length
         # add letter to that placement
+        @found_indices.each do |el|
+            @gameboard_arr[el] = letter
+        end
+        puts @gameboard_arr.join(' ')
+        # this displays the @gameboard, but i need to update the existing gameboard
     end
 end
