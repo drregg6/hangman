@@ -60,6 +60,7 @@ six strikes and you are out
             puts "Guess a letter!"
             $stdout.flush
             @letter = gets.chomp
+            @letter.downcase!
 
             # if @letter has already been guessed
             if @guessed_letters.include?(@letter)
@@ -92,6 +93,7 @@ six strikes and you are out
                 # place in @guessed_letters arr
                 @guessed_letters << @letter
             end
+            @gameboard.add_to_board(@word, @letter, @gameboard.board)
             if @letter == "f"
                 break
             end
