@@ -1,3 +1,6 @@
+require './gameboard'
+
+# global for now
 $words = []
 File.open("words.txt").readlines.each do |line|
     if line.length >= 5 && line.length <= 12
@@ -27,7 +30,7 @@ end
                 # player wins
 
 class Hangman
-    attr_accessor :word
+    attr_accessor :word, :gameboard
 
     @@rules = %q{
         RULES OF HANGMAN
@@ -39,6 +42,8 @@ six strikes and you are out
     def initialize
         puts @@rules
         @word = $words.sample
+        @gameboard = Gameboard.new
+        @gameboard.populate(@word.length, @gameboard.board)
     end
 end
 
@@ -51,3 +56,5 @@ end
 
 game = Hangman.new
 puts game.word
+puts game.gameboard
+puts game.gameboard.board
