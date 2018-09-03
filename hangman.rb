@@ -1,3 +1,7 @@
+# two gameboards, a winner and a loser
+# winner is when a letter is entered correctly
+# loser is a hangman character
+
 require './gameboard'
 
 # global for now
@@ -82,6 +86,8 @@ six strikes and you are out
             # if @letter exists in @word
             elsif @word.include?(@letter)
                 # place @letter in the correct place on @gameboard
+                @gameboard.board = @gameboard.add_to_board(@word, @letter, @gameboard.board)
+                puts @gameboard.board
                 puts "You guessed one correctly!"
                 # place in @guessed_letters arr
                 @guessed_letters << @letter
@@ -93,7 +99,9 @@ six strikes and you are out
                 # place in @guessed_letters arr
                 @guessed_letters << @letter
             end
-            @gameboard.add_to_board(@word, @letter, @gameboard.board)
+
+            # win / loss check
+
             if @letter == "f"
                 break
             end

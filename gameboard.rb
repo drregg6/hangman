@@ -34,7 +34,7 @@ class Gameboard
         @found_indices.each do |el|
             @gameboard_arr[el] = letter
         end
-        puts @gameboard_arr.join(' ')
+        @gameboard_arr.join(' ')
         # this displays the @gameboard, but i need to update the existing gameboard
     end
 end
