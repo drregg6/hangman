@@ -42,8 +42,39 @@ six strikes and you are out
     def initialize
         puts @@rules
         @word = $words.sample
+        @guessed_letters = Array.new
         @gameboard = Gameboard.new
         @gameboard.populate(@word.length, @gameboard.board)
+    end
+
+    def play_game
+        loop do
+            puts "Guess a letter!"
+            $stdout.flush
+            @letter = gets.chomp
+
+            # if @letter has already been guessed
+            if @guessed_letters.include?(@letter)
+                puts "Guess again dumb dumb"
+                p @guessed_letters
+            end
+                # guess again dumb dumb
+            # if @letter is more than one letter
+                # shame shame shame! no cheating!
+            # if @letter is anything but a letter
+                # guess a letter dumb dumb
+            # if @letter exists in @word
+                # place @letter in the correct place on @gameboard
+                # place in @guessed_letters arr
+            # if not
+                # add a strike
+                # place in @guessed_letters arr
+            if @letter == "f"
+                break
+            end
+            @guessed_letters << @letter
+        end
+        @letter
     end
 end
 
@@ -56,5 +87,6 @@ end
 
 game = Hangman.new
 puts game.word
-puts game.gameboard
+puts "\n\n"
 puts game.gameboard.board
+game.play_game
