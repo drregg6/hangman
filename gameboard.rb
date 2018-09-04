@@ -19,7 +19,7 @@ class Gameboard
         @board = ''
     end
 
-    def populate(num, gameboard)
+    def populate_gboard(num, gameboard)
         @count = 0
         while @count < num
             if @count == 0
@@ -53,7 +53,6 @@ class Gameboard
 
     def check_winner(board, word)
         board = board.gsub(/\s+/, '')
-
         return 1 if board == word
     end
 

@@ -3,6 +3,7 @@
 # loser is a hangman character
 
 require './gameboard'
+require './loserboard'
 
 # global for now
 # i feel as though these could be used in a module
@@ -16,6 +17,31 @@ end
 def all_letters(str)
     str[/[a-zA-Z]+/] == str
 end
+
+def user_feedback(letter, word, board, arr)
+    message = ""
+    result = :bad
+
+    if letter.length != 1
+        message = "Guess one at a time"
+        result = :neutral
+    elsif !all_letters(letter)
+        message = "You did it wrong, please guess a l-e-t-t-e-r!"
+        result = :neutral
+    elsif arr.include?(letter) || board.include?(letter)
+        message = "You already guessed that!"
+    elsif !word.include?(letter)
+        message = "You guessed incorrectly..."
+    elsif word.include?(letter)
+        message = "You guessed correctly!"
+        result = :good
+    end
+
+    puts message
+    result
+end
+
+
 
 # set up game
     # generate game
@@ -50,10 +76,14 @@ six strikes and you are out
     def initialize
         puts @@rules
         @word = $words.sample
+
         @gameboard = Gameboard.new
-        @gameboard.populate(@word.length, @gameboard.board)
+        @gameboard.populate_gboard(@word.length, @gameboard.board)
+
+        @loserboard = Loserboard.new
 
         @wrong_letters = Array.new
+        @strikes = 0
     end
 
     def play_game
@@ -67,37 +97,11 @@ six strikes and you are out
             @letter = gets.chomp
             @letter.downcase!
 
-            # if @letter has already been guessed
-            if @wrong_letters.include?(@letter) || @gameboard.board.include?(@letter)
-                # guess again dumb dumb
-                puts "You have already guessed that!"
+            @result = user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
+            if @result == :bad
                 @wrong_letters << @letter
-
-
-            # if @letter is more than one letter
-            elsif @letter.length != 1
-                # shame shame shame! no cheating!
-                puts "Shame! No cheating, guess one at a time!"
-
-
-            # if @letter is anything but a letter
-            elsif !all_letters(@letter)
-                # guess a letter dumb dumb
-                puts "You did it wrong... guess a LETTER!"
-
-            # if @letter exists in @word
-            elsif @word.include?(@letter)
-                # place @letter in the correct place on @gameboard
+            elsif @result == :good
                 @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
-                puts @gameboard.board
-                puts "You guessed one correctly!"
-
-            # if not
-            elsif !@word.include?(@letter)
-                # add a strike
-                puts "You guessed one incorrectly!"
-                # place in @wrong_letters arr
-                @wrong_letters << @letter
             end
 
             # win / loss check
@@ -109,10 +113,12 @@ six strikes and you are out
                 break
             end
 
-            # if @letter == "f"
-            #     break
-            # end
-            @letter
+            puts "\n\n"
+            puts "The word: #{@word}"
+            puts "Your letter guess: #{@letter}"
+            puts "Gameboard: #{@gameboard.board}"
+            puts "Incorrect guesses: #{@wrong_letters}"
+            puts "\n\n"
         end
     end
 end
@@ -126,6 +132,36 @@ end
 
 game = Hangman.new
 puts game.word
-puts "\n\n"
-puts game.gameboard.board
+# puts "\n\n"
+# puts game.gameboard.board
 game.play_game
+
+
+
+
+
+            # if @letter has already been guessed
+            # if @wrong_letters.include?(@letter) || @gameboard.board.include?(@letter)
+            #     # guess again dumb dumb
+            #     # puts "You have already guessed that!"
+            #     @wrong_letters << @letter
+
+            # # if @letter exists in @word
+            # elsif @word.include?(@letter)
+            #     # place @letter in the correct place on @gameboard
+            #     @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
+            #     puts @gameboard.board
+            #     # puts "You guessed one correctly!"
+
+            # # if not
+            # elsif !@word.include?(@letter)
+            #     # add a strike
+            #     # puts "You guessed one incorrectly!"
+            #     # place in @wrong_letters arr
+            #     @wrong_letters << @letter
+            # end
+
+            # @strikes = @wrong_letters.length
+            # @loserboard.board = @loserboard.populate_lboard(@strikes, @loserboard.board)
+            # p @loserboard.board
+            # user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
