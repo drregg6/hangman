@@ -56,4 +56,8 @@ class Gameboard
 
         return 1 if board == word
     end
+
+    def check_loser(arr)
+        return 1 if arr.length == 6
+    end
 end

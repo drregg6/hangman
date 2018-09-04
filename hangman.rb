@@ -53,14 +53,14 @@ six strikes and you are out
         @gameboard = Gameboard.new
         @gameboard.populate(@word.length, @gameboard.board)
 
-        @guessed_letters = Array.new
+        @wrong_letters = Array.new
     end
 
     def play_game
         loop do
             puts "\n\n"
-            if @guessed_letters.length != 0
-                puts "Guessed letters: " + @guessed_letters.join(" - ")
+            if @wrong_letters.length != 0
+                puts "Incorrect guesses: " + @wrong_letters.join(" - ")
             end
             puts "Guess a letter!"
             $stdout.flush
@@ -68,9 +68,10 @@ six strikes and you are out
             @letter.downcase!
 
             # if @letter has already been guessed
-            if @guessed_letters.include?(@letter)
+            if @wrong_letters.include?(@letter) || @gameboard.board.include?(@letter)
                 # guess again dumb dumb
                 puts "You have already guessed that!"
+                @wrong_letters << @letter
 
 
             # if @letter is more than one letter
@@ -90,26 +91,27 @@ six strikes and you are out
                 @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
                 puts @gameboard.board
                 puts "You guessed one correctly!"
-                # place in @guessed_letters arr
-                @guessed_letters << @letter
 
             # if not
             elsif !@word.include?(@letter)
                 # add a strike
                 puts "You guessed one incorrectly!"
-                # place in @guessed_letters arr
-                @guessed_letters << @letter
+                # place in @wrong_letters arr
+                @wrong_letters << @letter
             end
 
             # win / loss check
             if gameboard.check_winner(@gameboard.board, @word) == 1
                 puts "Winner winner, chicken dinner!"
                 break
-            end
-
-            if @letter == "f"
+            elsif gameboard.check_loser(@wrong_letters) == 1
+                puts "Loser loser, you're a loser!"
                 break
             end
+
+            # if @letter == "f"
+            #     break
+            # end
             @letter
         end
     end
