@@ -9,7 +9,7 @@ require './gameboard'
 $words = []
 File.open("words.txt").readlines.each do |line|
     if line.length >= 5 && line.length <= 12
-        $words << line.downcase
+        $words << line.downcase.delete("\n")
     end
 end
 
@@ -102,7 +102,10 @@ six strikes and you are out
             end
 
             # win / loss check
-            gameboard.check_winner(@gameboard.board, @word)
+            if gameboard.check_winner(@gameboard.board, @word) == 1
+                puts "Winner winner, chicken dinner!"
+                break
+            end
 
             if @letter == "f"
                 break

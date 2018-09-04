@@ -20,9 +20,9 @@ class Gameboard
     end
 
     def populate(num, gameboard)
-        @count = 1
+        @count = 0
         while @count < num
-            if @count == 1
+            if @count == 0
                 @board = "_"
             else
                 @board += " _"
@@ -35,7 +35,7 @@ class Gameboard
         # str and gameboard should match arr.length
         # to accurately match them up
         @str_arr = str.split('')
-        @str_arr.pop # removes the newline char
+        # @str_arr.pop # removes the newline char
 
         @gameboard_arr = gameboard.split(' ')
 
@@ -54,11 +54,6 @@ class Gameboard
     def check_winner(board, word)
         board = board.gsub(/\s+/, '')
 
-        puts "\n\n"
-        puts "This is the check_winner method"
-        puts "The word is #{word}"
-        puts "The gameboard says #{board}"
-        puts board == word
-        puts "\n\n"
+        return 1 if board == word
     end
 end
