@@ -1,12 +1,19 @@
-# two gameboards, a winner and a loser
-# winner is when a letter is entered correctly
-# loser is a hangman character
+######################################
+#               TODO                 #
+# ---------------------------------- #
+# Clean up code                      #
+# Get rid of test PUTS statements    #
+# Save implementation                #
+# Continue game vs. New game         #
+# Comment Loseboard and Gameboard    #
+#                                    #
+######################################
 
 require './gameboard'
 require './loserboard'
 
 # global for now
-# i feel as though these could be used in a module
+# I feel as though these could be used in a module
 $words = []
 File.open("words.txt").readlines.each do |line|
     if line.length >= 5 && line.length <= 12
@@ -14,6 +21,8 @@ File.open("words.txt").readlines.each do |line|
     end
 end
 
+
+# helpers
 def all_letters(str)
     str[/[a-zA-Z]+/] == str
 end
@@ -74,7 +83,6 @@ six strikes and you are out
     }
 
     def initialize
-        puts @@rules
         @word = $words.sample
 
         @gameboard = Gameboard.new
@@ -84,6 +92,8 @@ six strikes and you are out
 
         @wrong_letters = Array.new
         @strikes = 0
+
+        puts "#{@@rules}\n\nGenerating new game..\nThe word: #{@word}\nThe Gameboard: #{@gameboard.board}"
     end
 
     def play_game
@@ -135,35 +145,4 @@ end
         # csv format?
 
 game = Hangman.new
-puts game.word
-# puts "\n\n"
-# puts game.gameboard.board
 game.play_game
-
-
-
-
-
-            # if @letter has already been guessed
-            # if @wrong_letters.include?(@letter) || @gameboard.board.include?(@letter)
-            #     # guess again dumb dumb
-            #     # puts "You have already guessed that!"
-            #     @wrong_letters << @letter
-
-            # # if @letter exists in @word
-            # elsif @word.include?(@letter)
-            #     # place @letter in the correct place on @gameboard
-            #     @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
-            #     puts @gameboard.board
-            #     # puts "You guessed one correctly!"
-
-            # # if not
-            # elsif !@word.include?(@letter)
-            #     # add a strike
-            #     # puts "You guessed one incorrectly!"
-            #     # place in @wrong_letters arr
-            #     @wrong_letters << @letter
-            # end
-
-
-            # user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
