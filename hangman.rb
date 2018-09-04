@@ -64,7 +64,7 @@ end
                 # player wins
 
 class Hangman
-    attr_accessor :word, :gameboard
+    attr_accessor :word, :gameboard, :loserboard
 
     @@rules = %q{
         RULES OF HANGMAN
@@ -103,6 +103,10 @@ six strikes and you are out
             elsif @result == :good
                 @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
             end
+
+            @strikes = @wrong_letters.length
+            @loserboard.board = @loserboard.populate_lboard(@strikes)
+            puts @loserboard.board
 
             # win / loss check
             if gameboard.check_winner(@gameboard.board, @word) == 1
@@ -161,7 +165,5 @@ game.play_game
             #     @wrong_letters << @letter
             # end
 
-            # @strikes = @wrong_letters.length
-            # @loserboard.board = @loserboard.populate_lboard(@strikes, @loserboard.board)
-            # p @loserboard.board
+
             # user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
