@@ -1,3 +1,17 @@
+def found_indices(arr, str)
+    result = []
+
+    arr.each_index.select do |i|
+        if arr[i] == str
+            result << i
+        end
+    end
+
+    result
+end
+
+
+
 class Gameboard
     attr_accessor :board
 
@@ -17,24 +31,34 @@ class Gameboard
         end
     end
 
-    def add_to_board(str, letter, gameboard)
+    def add_to_board(str, gameboard, letter)
+        # str and gameboard should match arr.length
+        # to accurately match them up
         @str_arr = str.split('')
-        @str_arr.pop
+        @str_arr.pop # removes the newline char
+
         @gameboard_arr = gameboard.split(' ')
-        @found_indices = []
-        # get placement of the letter in the string
-        @str_arr.each_index.select do |i|
-            if @str_arr[i] == letter
-                @found_indices << i
-            end
-        end
-        # p @found_indices
-        # get placement in the gameboard
-        # add letter to that placement
-        @found_indices.each do |el|
+
+        # search through str array and find each index that the letter matches
+        @indices_arr = found_indices(@str_arr, letter)
+
+        # go through the matched indexes and update gameboard at those indexes
+        @indices_arr.each do |el|
             @gameboard_arr[el] = letter
         end
+
+        # return the updated gameboard
         @gameboard_arr.join(' ')
-        # this displays the @gameboard, but i need to update the existing gameboard
+    end
+
+    def check_winner(board, word)
+        board = board.gsub(/\s+/, '')
+
+        puts "\n\n"
+        puts "This is the check_winner method"
+        puts "The word is #{word}"
+        puts "The gameboard says #{board}"
+        puts board == word
+        puts "\n\n"
     end
 end

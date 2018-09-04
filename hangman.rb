@@ -50,9 +50,10 @@ six strikes and you are out
     def initialize
         puts @@rules
         @word = $words.sample
-        @guessed_letters = Array.new
         @gameboard = Gameboard.new
         @gameboard.populate(@word.length, @gameboard.board)
+
+        @guessed_letters = Array.new
     end
 
     def play_game
@@ -86,7 +87,7 @@ six strikes and you are out
             # if @letter exists in @word
             elsif @word.include?(@letter)
                 # place @letter in the correct place on @gameboard
-                @gameboard.board = @gameboard.add_to_board(@word, @letter, @gameboard.board)
+                @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
                 puts @gameboard.board
                 puts "You guessed one correctly!"
                 # place in @guessed_letters arr
@@ -101,6 +102,7 @@ six strikes and you are out
             end
 
             # win / loss check
+            gameboard.check_winner(@gameboard.board, @word)
 
             if @letter == "f"
                 break
