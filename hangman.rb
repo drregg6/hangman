@@ -83,6 +83,13 @@ def user_feedback(letter, word, board, arr)
     result
 end
 
+def write_file(data)
+    File.open("saved_file.txt", "w") do |line|
+        line.puts ' ,word,wrong_letters'
+        line.puts data
+    end
+end
+
 
 
 
@@ -152,6 +159,13 @@ six strikes and you are out
                 puts "Loser loser, you're a loser!"
                 puts "The word was #{@word.capitalize}..."
                 break
+            end
+
+            @data = "#{@word},#{@wrong_letters}"
+
+            write_file(@data)
+            File.open("saved_file.txt").readlines.each do |line|
+                puts line
             end
 
         end # end loop
