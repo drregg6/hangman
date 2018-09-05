@@ -19,16 +19,18 @@ class Gameboard
         @board = ''
     end
 
-    def populate_gboard(num, gameboard)
+    def populate_gboard(num)
         @count = 0
+        @result = ''
         while @count < num
             if @count == 0
-                @board = "_"
+                @result = "_"
             else
-                @board += " _"
+                @result += " _"
             end
             @count += 1
         end
+        @result
     end
 
     def add_to_board(str, gameboard, letter)

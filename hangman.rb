@@ -1,57 +1,3 @@
-######################################
-#               TODO                 #
-# ---------------------------------- #
-# Clean up code                      #
-# Get rid of test PUTS statements    #
-# Save implementation                #
-# Continue game vs. New game         #
-# Comment Loseboard and Gameboard    #
-#                                    #
-######################################
-
-require './gameboard'
-require './loserboard'
-
-# global for now
-# I feel as though these could be used in a module
-$words = []
-File.open("words.txt").readlines.each do |line|
-    if line.length >= 5 && line.length <= 12
-        $words << line.downcase.delete("\n")
-    end
-end
-
-
-# helpers
-def all_letters(str)
-    str[/[a-zA-Z]+/] == str
-end
-
-def user_feedback(letter, word, board, arr)
-    message = ""
-    result = :bad
-
-    if letter.length != 1
-        message = "Guess one at a time"
-        result = :neutral
-    elsif !all_letters(letter)
-        message = "You did it wrong, please guess a l-e-t-t-e-r!"
-        result = :neutral
-    elsif arr.include?(letter) || board.include?(letter)
-        message = "You already guessed that!"
-    elsif !word.include?(letter)
-        message = "You guessed incorrectly..."
-    elsif word.include?(letter)
-        message = "You guessed correctly!"
-        result = :good
-    end
-
-    puts message
-    result
-end
-
-
-
 # set up game
     # generate game
         # dictionary of hangman words
@@ -72,6 +18,75 @@ end
             # if player guesses the word
                 # player wins
 
+
+# set up save option
+    # when player enters "SAVE"
+        # File.open("saved_game.txt", "w")
+        # write over file
+        # csv format?
+
+
+
+######################################
+#               TODO                 #
+# ---------------------------------- #
+# Clean up code                      #
+# Get rid of test PUTS statements    #
+# Save implementation                #
+# Continue game vs. New game         #
+# Comment Loseboard and Gameboard    #
+#                                    #
+######################################
+
+require './gameboard'
+require './loserboard'
+require 'json'
+
+# global for now
+# I feel as though these could be used in a module
+$words = []
+File.open("words.txt").readlines.each do |line|
+    if line.length >= 5 && line.length <= 12
+        $words << line.downcase.delete("\n")
+    end
+end
+
+
+# helpers
+def all_letters(str)
+    str[/[a-zA-Z]+/] == str
+end
+
+def user_feedback(letter, word, board, arr)
+    message = ""
+    result = :bad
+
+    if letter == "save"
+        message = "SAVING..."
+        result = :save
+    elsif letter.length != 1
+        message = "Guess one at a time"
+        result = :neutral
+    elsif !all_letters(letter)
+        message = "You did it wrong, please guess a l-e-t-t-e-r!"
+        result = :neutral
+    elsif arr.include?(letter) || board.include?(letter)
+        message = "You already guessed that!"
+    elsif !word.include?(letter)
+        message = "You guessed incorrectly..."
+    elsif word.include?(letter)
+        message = "You guessed correctly!"
+        result = :good
+    end
+
+    puts "\n\n"
+    puts message
+    result
+end
+
+
+
+
 class Hangman
     attr_accessor :word, :gameboard, :loserboard
 
@@ -86,63 +101,67 @@ six strikes and you are out
         @word = $words.sample
 
         @gameboard = Gameboard.new
-        @gameboard.populate_gboard(@word.length, @gameboard.board)
+        @gameboard.board = @gameboard.populate_gboard(@word.length)
 
         @loserboard = Loserboard.new
 
         @wrong_letters = Array.new
         @strikes = 0
 
-        puts "#{@@rules}\n\nGenerating new game..\nThe word: #{@word}\nThe Gameboard: #{@gameboard.board}"
+        puts @@rules + "\n\n"
     end
 
     def play_game
         loop do
-            puts "\n\n"
+            puts "The Current Gameboard: #{@gameboard.board}"
+            puts "You currently have #{@strikes} #{@strikes != 1 ? 'strikes' : 'strike'}"
+
             if @wrong_letters.length != 0
-                puts "Incorrect guesses: " + @wrong_letters.join(" - ")
+                puts "Incorrect guesses: #{@wrong_letters.join(" - ")}\n"
             end
             puts "Guess a letter!"
+
+
             $stdout.flush
             @letter = gets.chomp
             @letter.downcase!
 
             @result = user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
-            if @result == :bad
+
+            if @result == :save
+                puts "Goodbye!"
+                break
+            elsif @result == :bad
                 @wrong_letters << @letter
+
+                @strikes = @wrong_letters.length
+                @loserboard.board = @loserboard.populate_lboard(@strikes)
+
+                puts @loserboard.board
             elsif @result == :good
                 @gameboard.board = @gameboard.add_to_board(@word, @gameboard.board, @letter)
             end
 
-            @strikes = @wrong_letters.length
-            @loserboard.board = @loserboard.populate_lboard(@strikes)
-            puts @loserboard.board
+
 
             # win / loss check
             if gameboard.check_winner(@gameboard.board, @word) == 1
                 puts "Winner winner, chicken dinner!"
+                puts "The word was #{@word.upcase}!"
                 break
             elsif gameboard.check_loser(@wrong_letters) == 1
                 puts "Loser loser, you're a loser!"
+                puts "The word was #{@word.capitalize}..."
                 break
             end
 
-            puts "\n\n"
-            puts "The word: #{@word}"
-            puts "Your letter guess: #{@letter}"
-            puts "Gameboard: #{@gameboard.board}"
-            puts "Incorrect guesses: #{@wrong_letters}"
-            puts "\n\n"
         end
     end
 end
 
-
-# set up save option
-    # when player enters "SAVE"
-        # File.open("saved_game.txt", "w")
-        # write over file
-        # csv format?
-
 game = Hangman.new
 game.play_game
+
+def generate_game
+
+end
