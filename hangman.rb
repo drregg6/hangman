@@ -111,6 +111,19 @@ six strikes and you are out
         puts @@rules + "\n\n"
     end
 
+    def to_str
+        "In Hangman:\n Word: #{@word}\n Wrong letters: #{@wrong_letters}\n"
+    end
+    def to_json(*a)
+        {
+            "json_class" => self.class.name,
+            "data" => {"word" => @word, "wrong_letters" => @wrong_letters}
+        }.to_json(*a)
+    end
+    def self.json_create(o)
+        new(o["data"]["word"], o["data"]["wrong_letters"])
+    end
+
     def play_game
         loop do
             puts "The Current Gameboard: #{@gameboard.board}"
@@ -155,13 +168,12 @@ six strikes and you are out
                 break
             end
 
-        end
-    end
+            # json is being updated
+            puts self.to_json
+
+        end # end loop
+    end # end method
 end
 
 game = Hangman.new
 game.play_game
-
-def generate_game
-
-end
