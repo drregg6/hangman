@@ -1,3 +1,10 @@
+######################################
+#               TODO                 #
+# ---------------------------------- #
+# generate a gameboard based on data #
+#                                    #
+######################################
+
 def found_indices(arr, str)
     result = []
 
@@ -15,7 +22,7 @@ end
 class Gameboard
     attr_accessor :board
 
-    def initialize
+    def initialize()
         @board = ''
     end
 

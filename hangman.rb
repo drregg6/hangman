@@ -78,10 +78,13 @@ class Hangman
     attr_accessor :word, :gameboard, :loserboard
 
     @@rules = %q{
-        RULES OF HANGMAN
-    -------------------------
-guess the hidden word letter by letter
-six strikes and you are out
+            RULES OF HANGMAN
+    -----------------------------
+  GUESS the hidden word, letter by letter
+      HANGMAN and you lose the game
+
+         SAVE to save your game
+    QUIT to leave game and erase data
     }
 
     def initialize
@@ -94,7 +97,34 @@ six strikes and you are out
         @loserboard = Loserboard.new
 
         puts @@rules + "\n\n"
-        generate_game(@word)
+
+
+        if File.exist?("saved_file.json")
+            puts "Would you like to continue the saved game?"
+            puts "Please answer YES or NO"
+            loop do
+                $stdout.flush
+                @answer = gets.chomp.downcase
+
+                if @answer == "yes" || @answer == "y"
+                    puts "Continuing saved data..."
+                    @data = JSON.parse(File.read("saved_file.json"))
+                    @word = @data["word"]
+                    @wrong_letters = @data["wrong_letters"]
+                    generate_game(@word)
+                    @gameboard.board = @data["gameboard"]
+                    break
+                elsif @answer == "no" || @answer == "n"
+                    puts "Starting new game..."
+                    generate_game(@word)
+                    break
+                else
+                    puts "Please choose YES or NO"
+                end
+            end
+        else
+            generate_game(@word)
+        end
     end
 
     def generate_game(word)
@@ -124,6 +154,7 @@ six strikes and you are out
             if @result == :save
                 @saved_json["word"] = @word
                 @saved_json["wrong_letters"] = @wrong_letters
+                @saved_json["gameboard"] = @gameboard.board
 
                 File.open("saved_file.json", "w") do |file|
                     file.write(JSON.pretty_generate(@saved_json))
@@ -152,10 +183,14 @@ six strikes and you are out
             if gameboard.check_winner(@gameboard.board, @word) == 1
                 puts "Winner winner, chicken dinner!"
                 puts "The word was #{@word.upcase}!"
+
+                File.delete("saved_file.json")
                 break
             elsif gameboard.check_loser(@wrong_letters) == 1
                 puts "Loser loser, you're a loser!"
                 puts "The word was #{@word.capitalize}..."
+
+                File.delete("saved_file.json")
                 break
             end
 
@@ -167,5 +202,5 @@ end
 # data = JSON.parse(file)
 # puts data["word"]
 
-# game = Hangman.new
-# game.play_game
+game = Hangman.new
+game.play_game
