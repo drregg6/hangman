@@ -31,7 +31,7 @@ end
 
 def end_game
     puts "Deleting data..."
-    File.delete("saved_file.txt")
+    File.delete("saved_file.json")
     puts "Deletion complete!"
 end
 
@@ -86,36 +86,23 @@ six strikes and you are out
 
     def initialize
         @word = $words.sample
+        @wrong_letters = Array.new
+        @strikes = @wrong_letters.length
+        @saved_json = {}
 
         @gameboard = Gameboard.new
-        @gameboard.board = @gameboard.populate_gboard(@word.length)
-
         @loserboard = Loserboard.new
 
-        @wrong_letters = Array.new
-        @strikes = 0
-
-        @saved_json = {
-            "word" => nil,
-            "wrong_letters" => nil
-        }
-
         puts @@rules + "\n\n"
+        generate_game(@word)
     end
 
-    # def to_json(*a)
-    #     {
-    #         "json_class" => self.class.name,
-    #         "data" => {
-    #             "word" => @word,
-    #             "wrong_letters" => @wrong_letters
-    #         }
-    #     }.to_json(*a)
-    # end
+    def generate_game(word)
+        @gameboard.board = @gameboard.populate_gboard(word.length)
 
-    # def self.json_create(o)
-    #     new(o["data"]["word"], o["data"]["wrong_letters"])
-    # end
+        @strikes = @wrong_letters.length
+        @loserboard.board = @loserboard.populate_lboard(@strikes)
+    end
 
     def play_game
         loop do
@@ -135,9 +122,13 @@ six strikes and you are out
             @result = user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
 
             if @result == :save
+                @saved_json["word"] = @word
+                @saved_json["wrong_letters"] = @wrong_letters
+
                 File.open("saved_file.json", "w") do |file|
                     file.write(JSON.pretty_generate(@saved_json))
                 end
+
                 puts "Goodbye!"
                 break
             elsif @result == :quit
@@ -168,19 +159,13 @@ six strikes and you are out
                 break
             end
 
-
-            @saved_json["word"] = @word
-            @saved_json["wrong_letters"] = @wrong_letters
-            # @data = "#{@word},#{@wrong_letters}"
-
-            # write_file(@data)
-            # File.open("saved_file.txt").readlines.each do |line|
-            #     puts line
-            # end
-
         end # end loop
     end # end method
 end
 
-game = Hangman.new
-game.play_game
+# file = File.read("saved_file.json")
+# data = JSON.parse(file)
+# puts data["word"]
+
+# game = Hangman.new
+# game.play_game
