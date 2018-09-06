@@ -1,12 +1,18 @@
 ######################################
 #               TODO                 #
 # ---------------------------------- #
-# QUIT to end game                   #
-# file only writes when user SAVEs   #
+# comment Loserboard and Gameboard   #
+# place PUT strings into vars        #
+#                                    #
+# code is SUPER sloppy               #
+# clean this SHIT up                 #
 # continue cleaning up code          #
-# Continue game vs. New game         #
-# Comment Loseboard and Gameboard    #
-# PUTS strings put into vars         #
+#                                    #
+# helper methods placed in module    #
+# end_game is useless                #
+#    File.delete is being repeated   #
+#    message should be updated       #
+#    based on the situation          #
 #                                    #
 ######################################
 
@@ -108,14 +114,25 @@ class Hangman
 
                 if @answer == "yes" || @answer == "y"
                     puts "Continuing saved data..."
-                    @data = JSON.parse(File.read("saved_file.json"))
+                    # read data from JSON file
+                    @file = File.read("saved_file.json")
+                    # parse data
+                    @data = JSON.parse(@file)
+                    # replace the randomly generated word and empty arr
+                    # with data from last game
                     @word = @data["word"]
                     @wrong_letters = @data["wrong_letters"]
+                    # generate game
                     generate_game(@word)
+                    # replace generated board with real board
+                    # TODO: this needs to be replaced
                     @gameboard.board = @data["gameboard"]
                     break
                 elsif @answer == "no" || @answer == "n"
                     puts "Starting new game..."
+                    # delete old data
+                    File.delete("saved_file.json")
+                    # generate a brand new game based on a new word
                     generate_game(@word)
                     break
                 else
@@ -152,10 +169,12 @@ class Hangman
             @result = user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
 
             if @result == :save
+                # save the data needed to generate game
                 @saved_json["word"] = @word
                 @saved_json["wrong_letters"] = @wrong_letters
                 @saved_json["gameboard"] = @gameboard.board
 
+                # save that data into a json file
                 File.open("saved_file.json", "w") do |file|
                     file.write(JSON.pretty_generate(@saved_json))
                 end
@@ -197,10 +216,6 @@ class Hangman
         end # end loop
     end # end method
 end
-
-# file = File.read("saved_file.json")
-# data = JSON.parse(file)
-# puts data["word"]
 
 game = Hangman.new
 game.play_game
