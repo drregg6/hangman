@@ -1,2 +1,2 @@
- ,word,wrong_letters
+word,wrong_letters
 rectilineal,["o", "u", "s", "p", "m"]

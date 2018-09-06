@@ -57,7 +57,7 @@ end
 
 def write_file(data)
     File.open("saved_file.txt", "w") do |line|
-        line.puts ' ,word,wrong_letters'
+        line.puts 'word,wrong_letters'
         line.puts data
     end
 end
@@ -123,6 +123,7 @@ six strikes and you are out
 
 
             # win / loss check
+            # these two can be checked in the same method
             if gameboard.check_winner(@gameboard.board, @word) == 1
                 puts "Winner winner, chicken dinner!"
                 puts "The word was #{@word.upcase}!"
@@ -146,3 +147,50 @@ end
 
 game = Hangman.new
 game.play_game
+
+
+
+=begin
+
+
+
+def initialize
+
+    @word = random_word
+    @guessed_letters = []
+
+    @gameboard = Gameboard.new
+    @loserboard = Loserboard.new
+
+    if saved_file exists?
+        would you like to continue saved game? yes/no
+        loop do
+            $stdout.flush
+            answer = gets.chomp
+
+            if answer == "yes"
+                puts "returning you to game..."
+                CSV.read("saved_file")
+                @word = CSV['word']
+                @wrong_letters = CSV['wrong_letters']
+
+                generate_game(@word, @wrong_letters)
+            else
+                puts "starting new game..."
+
+                generate_game(@word, @wrong_letters)
+            end
+        end
+    else
+        generate_game(@word, @wrong_letters)
+    end
+end
+
+def generate_game
+    @gameboard.board = @gameboard.populate_gboard(@word.length)
+    @strikes = @wrong_letters.length
+end
+
+
+
+=end
