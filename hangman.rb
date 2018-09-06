@@ -12,6 +12,7 @@
 
 require './gameboard'
 require './loserboard'
+require 'json'
 
 # global for now
 # I feel as though these could be used in a module
@@ -28,6 +29,12 @@ def all_letters(str)
     str[/[a-zA-Z]+/] == str
 end
 
+def end_game
+    puts "Deleting data..."
+    File.delete("saved_file.txt")
+    puts "Deletion complete!"
+end
+
 def user_feedback(letter, word, board, arr)
     message = ""
     result = :bad
@@ -35,6 +42,9 @@ def user_feedback(letter, word, board, arr)
     if letter == "save"
         message = "SAVING..."
         result = :save
+    elsif letter == "quit"
+        end_game
+        result = :quit
     elsif letter.length != 1
         message = "Guess one at a time"
         result = :neutral
@@ -64,7 +74,6 @@ end
 
 
 
-
 class Hangman
     attr_accessor :word, :gameboard, :loserboard
 
@@ -86,8 +95,27 @@ six strikes and you are out
         @wrong_letters = Array.new
         @strikes = 0
 
+        @saved_json = {
+            "word" => nil,
+            "wrong_letters" => nil
+        }
+
         puts @@rules + "\n\n"
     end
+
+    # def to_json(*a)
+    #     {
+    #         "json_class" => self.class.name,
+    #         "data" => {
+    #             "word" => @word,
+    #             "wrong_letters" => @wrong_letters
+    #         }
+    #     }.to_json(*a)
+    # end
+
+    # def self.json_create(o)
+    #     new(o["data"]["word"], o["data"]["wrong_letters"])
+    # end
 
     def play_game
         loop do
@@ -107,6 +135,12 @@ six strikes and you are out
             @result = user_feedback(@letter, @word, @gameboard.board, @wrong_letters)
 
             if @result == :save
+                File.open("saved_file.json", "w") do |file|
+                    file.write(JSON.pretty_generate(@saved_json))
+                end
+                puts "Goodbye!"
+                break
+            elsif @result == :quit
                 puts "Goodbye!"
                 break
             elsif @result == :bad
@@ -134,16 +168,31 @@ six strikes and you are out
                 break
             end
 
-            @data = "#{@word},#{@wrong_letters}"
 
-            write_file(@data)
-            File.open("saved_file.txt").readlines.each do |line|
-                puts line
-            end
+            @saved_json["word"] = @word
+            @saved_json["wrong_letters"] = @wrong_letters
+            # @data = "#{@word},#{@wrong_letters}"
+
+            # write_file(@data)
+            # File.open("saved_file.txt").readlines.each do |line|
+            #     puts line
+            # end
 
         end # end loop
     end # end method
 end
+
+# temp_word = "aardvark"
+# temp_letters = ["a", "e", "i"]
+
+# tempHash = {
+#     "word" => temp_word,
+#     "guessed_letters" => temp_letters
+# }
+
+# File.open("saved_json.json", "w") do |file|
+#     file.write(tempHash.to_json)
+# end
 
 game = Hangman.new
 game.play_game
@@ -188,7 +237,9 @@ end
 
 def generate_game
     @gameboard.board = @gameboard.populate_gboard(@word.length)
+
     @strikes = @wrong_letters.length
+    @loserboard.board = @loardboard.populate_lboard(@strikes)
 end
 
 
